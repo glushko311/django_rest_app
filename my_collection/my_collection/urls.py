@@ -15,10 +15,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from collection.views import ItemApiView
+from django.urls import path, include
+from collection.views import ItemApiViewSet
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'items', ItemApiViewSet, basename='item')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/items', ItemApiView.as_view())
+    path('api/v1/', include(router.urls))
+    # Роутер заменил эти пути
+    # path('api/v1/items', ItemApiViewSet.as_view({'get': 'list', 'post': 'create'})),
+    # path('api/v1/items/<int:pk>/', ItemApiViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'})),
+
 ]
