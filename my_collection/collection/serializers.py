@@ -3,10 +3,11 @@ from collection.models import Item, Collection
 
 
 class ItemSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Item
-        fields = ('identifier', 'title', 'description', 'is_published', 'collection')
+        fields = ('identifier', 'title', 'description', 'is_published', 'collection', 'user')
 
 
 # class ItemSerializer(serializers.ModelSerializer):

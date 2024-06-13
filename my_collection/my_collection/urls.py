@@ -15,18 +15,37 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
-from collection.views import ItemApiViewSet
-from rest_framework import routers
+from django.urls import path, include, re_path
+from collection.views import ItemAPIList, ItemAPIView, ItemAPIUpdate, ItemAPIDestroy
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
-router = routers.DefaultRouter()
-router.register(r'items', ItemApiViewSet, basename='item')
+# from collection.views import ItemApiViewSet
+# from rest_framework import routers
+#
+# router = routers.DefaultRouter()
+# router.register(r'items', ItemApiViewSet, basename='item')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/', include(router.urls))
-    # Роутер заменил эти пути
-    # path('api/v1/items', ItemApiViewSet.as_view({'get': 'list', 'post': 'create'})),
-    # path('api/v1/items/<int:pk>/', ItemApiViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'})),
+    # # -------------------------------
+    # path('api/v1/', include(router.urls)),
+    # # Роутер заменил эти пути
+    # # path('api/v1/items', ItemApiViewSet.as_view({'get': 'list', 'post': 'create'})),
+    # # path('api/v1/items/<int:pk>/', ItemApiViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'})),
+    # # -------------------------------
 
+    path('api/v1/items/', ItemAPIList.as_view()),
+    path('api/v1/items/<int:pk>/', ItemAPIView.as_view()),
+    path('api/v1/items/<int:pk>/update/', ItemAPIUpdate.as_view()),
+    path('api/v1/items/<int:pk>/delete/', ItemAPIDestroy.as_view()),
+
+    # path('api/v1/auth/', include('djoser.urls')),
+    # re_path(r'^api/v1/auth/', include('djoser.urls.authtoken')),
+    path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/v1/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 ]

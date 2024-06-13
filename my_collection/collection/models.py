@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Item(models.Model):
@@ -9,6 +10,8 @@ class Item(models.Model):
     time_update = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=True)
     collection = models.ForeignKey('Collection', on_delete=models.PROTECT, null=True)
+    deleted = models.BooleanField(default=False)
+    user = models.ForeignKey(User, verbose_name='User', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'item'
@@ -23,6 +26,7 @@ class Item(models.Model):
 class Collection(models.Model):
     title = models.CharField(max_length=255, db_index=True)
     description = models.TextField(blank=True)
+    deleted = models.BooleanField(default=False)
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)
 
