@@ -99,6 +99,10 @@ class ItemsListPagination(LimitOffsetPagination):
     default_limit = 3
     max_limit = 100
 
+class CollectionsListPagination(LimitOffsetPagination):
+    default_limit = 3
+    max_limit = 100
+
 
 class ItemAPIList(generics.ListCreateAPIView):
     queryset = Item.objects.all()
@@ -127,3 +131,25 @@ class ItemAPIDestroy(generics.DestroyAPIView):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
     permission_classes = [IsAdminUser]
+
+
+class UserCollectionsApiList(generics.ListCreateAPIView):
+    serializer_class = CollectionSerializer
+    pagination_class = CollectionsListPagination
+    permission_classes = [IsAuthenticated, ]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Collection.objects.filter(user_id=user.id)
+
+
+class CollectionItemsApiList(generics.ListCreateAPIView):
+    serializer_class = ItemSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, ]
+    pagination_class = ItemsListPagination
+    filter_backends = [SearchFilter,]
+    search_fields = ['title', 'description']
+
+    def get_queryset(self):
+        collection_id = self.kwargs.get('collection_id', None)
+        return Item.objects.filter(collection_id=collection_id)

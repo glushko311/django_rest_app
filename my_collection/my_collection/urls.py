@@ -16,13 +16,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
-from collection.views import ItemAPIList, ItemAPIView, ItemAPIUpdate, ItemAPIDestroy
+from django.conf.urls.static import static
+
+from collection.views import (
+    ItemAPIList,
+    ItemAPIView,
+    ItemAPIUpdate,
+    ItemAPIDestroy,
+    CollectionItemsApiList,
+    UserCollectionsApiList,
+)
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
 )
 
+from my_collection import settings
 # from collection.views import ItemApiViewSet
 # from rest_framework import routers
 #
@@ -43,9 +53,14 @@ urlpatterns = [
     path('api/v1/items/<int:pk>/update/', ItemAPIUpdate.as_view()),
     path('api/v1/items/<int:pk>/delete/', ItemAPIDestroy.as_view()),
 
+    path('api/v1/collection/', UserCollectionsApiList.as_view()),
+    path('api/v1/collection/<int:collection_id>/items/', CollectionItemsApiList.as_view()),
+
     # path('api/v1/auth/', include('djoser.urls')),
     # re_path(r'^api/v1/auth/', include('djoser.urls.authtoken')),
     path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/v1/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 ]
+
+# urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

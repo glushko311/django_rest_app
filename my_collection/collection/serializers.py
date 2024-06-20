@@ -4,11 +4,16 @@ from collection.models import Item, Collection
 
 class ItemSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Item
-        fields = ('identifier', 'title', 'description', 'is_published', 'collection', 'user')
+        fields = ('identifier', 'title', 'description', 'image_url', 'is_published', 'collection', 'user')
 
+    def get_image_url(self, obj):
+        if obj.image:
+            return obj.image.url
+        return None
 
 # class ItemSerializer(serializers.ModelSerializer):
 #     identifier = serializers.CharField(max_length=255)
@@ -39,4 +44,4 @@ class ItemSerializer(serializers.ModelSerializer):
 class CollectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collection
-        fields = ('title', 'description')
+        fields = ('title', 'description', 'user')
